@@ -1,0 +1,31 @@
+spring:
+  application.name: auth-service
+  datasource:
+    url:
+    username:
+    password:
+  jpa:
+    hibernate.ddl-auto: create-drop
+    show-sql: false
+    defer-datasource-initialization: true
+  sql.init:
+    mode: always
+    platform: postgres
+    data-locations: classpath:data.sql
+  docker:
+    compose:
+      enabled: true
+      file: classpath:docker-compose.yaml
+
+
+app.security.token:
+      access:
+        key: '{"kty":"oct","k":"hi7S5RX5ZRZooHA0RKGctZ-KtR9FoESgCnH-3BNg5XI"}'
+        ttl: 1h
+      refresh:
+        key: '{"kty":"oct","k":"956PBFst1FguLr5irJD-aQ"}'
+        ttl: 14d
+
+logging:
+  level:
+    org.springframework.security: trace

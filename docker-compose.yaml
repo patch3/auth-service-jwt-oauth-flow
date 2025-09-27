@@ -1,0 +1,51 @@
+
+services:
+
+  # ========== POSTGRESQL ==========
+  postgres:
+    image: postgres:17.6
+    container_name: auth-postgres
+    environment:
+      POSTGRES_USER: auth-service
+      POSTGRES_PASSWORD: tg4yh34hr-tg4ikyh5rh54y34y56u=8k
+      POSTGRES_DB: auth_data
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U auth-service -d auth_data"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+    networks:
+      - app-network
+
+  # ========== AUTH-SERVICE ==========
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "8081:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/auth_data
+      - SPRING_DATASOURCE_USERNAME=auth-service
+      - SPRING_DATASOURCE_PASSWORD=tg4yh34hr-tg4ikyh5rh54y34y56u=8k
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+
+# ========== ВОЛЮМЫ И СЕТИ ==========
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
